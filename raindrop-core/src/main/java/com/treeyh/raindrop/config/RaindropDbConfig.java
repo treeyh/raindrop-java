@@ -7,11 +7,13 @@ public class RaindropDbConfig {
 
     private String dbType;
 
-    private String dbIp;
+    // 数据库驱动
+    private String jdbcDriver;
 
-    private Integer dbPort;
+    // 数据库Url jdbc:mysql://{host}:{port}/{dbName}?{params}
+    private String dbUrl;
 
-    private String user;
+    private String dbName;
 
-    private String password;
+    private String dbPassword;
 }
