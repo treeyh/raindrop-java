@@ -1,18 +1,25 @@
 package com.treeyh.raindrop.dao;
 
+import com.treeyh.raindrop.config.RaindropDbConfig;
 import com.treeyh.raindrop.model.ETimeUnit;
 import com.treeyh.raindrop.model.RaindropWorkerPO;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 public interface IRaindropWorkerDAO {
 
     /**
+     * 连接注册
+     */
+    void initConn(RaindropDbConfig dbConfig) throws ClassNotFoundException, SQLException;
+
+    /**
      * 获取数据库当前时间
      * @return 数据库当前时间
      */
-    Date getNowTime();
+    Date getNowTime() throws SQLException;
 
 
     /**

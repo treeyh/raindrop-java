@@ -1,8 +1,10 @@
 package com.treeyh.raindrop.config;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class RaindropDbConfig {
 
     private String dbType;
