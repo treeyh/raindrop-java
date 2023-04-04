@@ -29,15 +29,13 @@ public class RaindropWorkerMySqlDAOTest {
 
     @Test
     public void testGetNowTime() {
+        Date date = raindropWorkerMySqlDAO.getNowTime();
+        log.info(date.toString());
+        Assertions.assertNotEquals(date, null);
+    }
 
-        try {
-            Date date = raindropWorkerMySqlDAO.getNowTime();
-
-            log.info(date.toString());
-            Assertions.assertNotEquals(date, null);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
+    @Test
+    public void testGetDbName() {
+        String dbName = raindropWorkerMySqlDAO.ge
     }
 }

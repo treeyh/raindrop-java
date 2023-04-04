@@ -9,17 +9,19 @@ import com.treeyh.raindrop.utils.StrUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Date;
 import java.util.List;
 
 @Slf4j
 public class RaindropWorkerMySqlDAO implements IRaindropWorkerDAO {
 
-    private Connection conn;
+    private HikariDataSource ds;
+
+    private static final  String columnName = "value";
+    private static final String sqlGetNow = "SELECT NOW() as "+columnName+";";
+
+    private static final String sqlGetDbName = "SELECT DATABASE() as "+columnName+";";
 
     @Override
     public void initConn(RaindropDbConfig dbConfig) throws ClassNotFoundException, SQLException {
@@ -28,7 +30,7 @@ public class RaindropWorkerMySqlDAO implements IRaindropWorkerDAO {
             Class.forName(dbConfig.getJdbcDriver());
         }
 
-        HikariDataSource ds = new HikariDataSource();
+        ds = new HikariDataSource();
         ds.setJdbcUrl(dbConfig.getDbUrl());
         ds.setUsername(dbConfig.getDbName());
         ds.setPassword(dbConfig.getDbPassword());
@@ -40,30 +42,74 @@ public class RaindropWorkerMySqlDAO implements IRaindropWorkerDAO {
         ds.addDataSourceProperty("cacheServerConfiguration", "true");
         ds.addDataSourceProperty("elideSetAutoCommits", "true");
         ds.addDataSourceProperty("maintainTimeStats", "false");
-        try {
-            conn = ds.getConnection();
-        } catch (SQLException e) {
-            log.error("init conn fail. "+ e.getMessage(), e);
-            throw e;
-        }
+
+        ds.addDataSourceProperty("maximumPoolSize", 2);
+        ds.addDataSourceProperty("minimumIdle", 2);
     }
 
-    private static String sqlGetNow = "SELECT NOW() as now;";
     @Override
-    public Date getNowTime() throws SQLException {
-        Statement statement = conn.createStatement();
+    public Date getNowTime() {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        Date date = null;
+        try {
+            conn = ds.getConnection();
+            statement = conn.prepareStatement(sqlGetNow);
+            ResultSet rs = statement.executeQuery();
+            String d = null;
+            while (rs.next()) {
+                d = rs.getString(columnName);
+                break;
+            }
 
-        ResultSet rs = statement.executeQuery(sqlGetNow);
-        String date = null;
-        while (rs.next()) {
-            date = rs.getString("now");
-            break;
+            if (StrUtils.isNotEmpty(d)) {
+                date = DateUtils.str2Date(d);
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }finally {
+            if (null != statement) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if(null != conn) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
+        return date;
+    }
 
-        if (StrUtils.isNotEmpty(date)) {
-            return DateUtils.str2Date(date);
+    private String getDbName() {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        String dbName = null;
+        try {
+            conn = ds.getConnection();
+            statement = conn.prepareStatement(sqlGetNow);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                dbName = rs.getString(columnName);
+                break;
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }finally {
+            if (null != statement) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
-        return null;
+        return dbName;
     }
 
     @Override
