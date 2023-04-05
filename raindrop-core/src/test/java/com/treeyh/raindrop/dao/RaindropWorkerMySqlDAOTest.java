@@ -35,7 +35,14 @@ public class RaindropWorkerMySqlDAOTest {
     }
 
     @Test
-    public void testGetDbName() {
-        String dbName = raindropWorkerMySqlDAO.ge
+    public void testExistTable() {
+        Boolean exist = raindropWorkerMySqlDAO.existTable();
+        Assertions.assertTrue(exist);
+    }
+
+    @Test
+    public void testInitTable() {
+        Boolean result = raindropWorkerMySqlDAO.initTable();
+        Assertions.assertTrue(result);
     }
 }
