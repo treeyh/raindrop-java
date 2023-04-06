@@ -1,5 +1,6 @@
 package com.treeyh.raindrop.model;
 
+
 public enum  ETimeUnit {
     Millisecond(1),
     Second(2),
@@ -10,5 +11,9 @@ public enum  ETimeUnit {
     private Integer type;
     private ETimeUnit(Integer type){
         this.type = type;
+    }
+
+    public Integer getType() {
+        return this.type;
     }
 }

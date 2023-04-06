@@ -10,8 +10,12 @@ import java.util.List;
 
 public interface IRaindropWorkerDAO {
 
+
     /**
      * 连接注册
+     * @param dbConfig
+     * @throws ClassNotFoundException
+     * @throws SQLException
      */
     void initConn(RaindropDbConfig dbConfig) throws ClassNotFoundException, SQLException;
 
@@ -36,17 +40,18 @@ public interface IRaindropWorkerDAO {
 
     /**
      * 初始化workers
+     * @param beginId
+     * @param endId
      * @return 是否成功
      */
-    Boolean initWorkers();
+    Boolean initWorkers(Long beginId, Long endId);
 
     /**
      * 找到该节点之前的worker
      * @param code
-     * @param timeUnit
      * @return worker
      */
-    RaindropWorkerPO getBeforeWorker(String code, ETimeUnit timeUnit) ;
+    RaindropWorkerPO getBeforeWorker(String code) ;
 
     /**
      * 查询空闲的workers

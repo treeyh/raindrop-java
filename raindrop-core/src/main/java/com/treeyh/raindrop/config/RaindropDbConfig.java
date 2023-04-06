@@ -1,9 +1,9 @@
 package com.treeyh.raindrop.config;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 @Data
+@ToString
 @Builder
 public class RaindropDbConfig {
 

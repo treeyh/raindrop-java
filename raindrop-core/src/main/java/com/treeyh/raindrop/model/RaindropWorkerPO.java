@@ -1,10 +1,13 @@
 package com.treeyh.raindrop.model;
 
-import lombok.Data;
+import lombok.*;
 
 import java.util.Date;
 
 @Data
+@ToString
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class RaindropWorkerPO {
     private Long id;
 
