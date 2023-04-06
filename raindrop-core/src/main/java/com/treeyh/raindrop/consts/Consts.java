@@ -40,4 +40,14 @@ public class Consts {
     public final static Integer ID_TIME_BACK_BIT_LENGTH=1;
 
 
+    /**
+     * 服务器与DB时间允许间隔，毫秒
+     */
+    public final static Long DATABASE_TIME_INTERVAL = 30L * 1000L;
+
+    /**
+     * 数据库心跳时间间隔，毫秒
+     */
+    public final static Long HEARTBEAT_TIME_INTERVAL = 30L * 1000L;
+
 }

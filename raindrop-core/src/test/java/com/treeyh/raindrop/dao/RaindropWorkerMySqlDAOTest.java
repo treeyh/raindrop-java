@@ -2,6 +2,7 @@ package com.treeyh.raindrop.dao;
 
 import com.treeyh.raindrop.BaseTest;
 import com.treeyh.raindrop.dao.mysql.RaindropWorkerMySqlDAO;
+import com.treeyh.raindrop.exception.RaindropException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,8 +42,12 @@ public class RaindropWorkerMySqlDAOTest {
     }
 
     @Test
-    public void testInitTable() {
-        Boolean result = raindropWorkerMySqlDAO.initTable();
-        Assertions.assertTrue(result);
+    public void testInitTableInfo() {
+
+        try {
+            raindropWorkerMySqlDAO.initTableInfo(1L, 10L);
+        } catch (RaindropException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

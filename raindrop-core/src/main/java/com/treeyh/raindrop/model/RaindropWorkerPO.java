@@ -9,11 +9,11 @@ import java.util.Date;
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class RaindropWorkerPO {
-    private Long id;
+    private long id;
 
     private String code;
 
-    private Integer timeUnit;
+    private int timeUnit;
 
     private Date heartbeatTime;
 
@@ -21,7 +21,7 @@ public class RaindropWorkerPO {
 
     private Date updateTime;
 
-    private Long version;
+    private long version;
 
-    private Integer delFlag;
+    private int delFlag;
 }

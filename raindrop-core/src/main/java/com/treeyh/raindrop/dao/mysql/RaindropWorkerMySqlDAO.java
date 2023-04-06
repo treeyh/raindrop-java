@@ -1,7 +1,7 @@
 package com.treeyh.raindrop.dao.mysql;
 
 import com.treeyh.raindrop.config.RaindropDbConfig;
-import com.treeyh.raindrop.dao.IRaindropWorkerDAO;
+import com.treeyh.raindrop.dao.AbstractRaindropWorkerDAO;
 import com.treeyh.raindrop.model.ETimeUnit;
 import com.treeyh.raindrop.model.RaindropWorkerPO;
 import com.treeyh.raindrop.utils.DateUtils;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-public class RaindropWorkerMySqlDAO implements IRaindropWorkerDAO {
+public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
 
     private HikariDataSource ds;
 
@@ -164,24 +164,7 @@ public class RaindropWorkerMySqlDAO implements IRaindropWorkerDAO {
     }
 
     @Override
-    public Boolean initTable() {
-        Connection conn = null;
-        PreparedStatement statement = null;
-        Boolean result =false;
-        try {
-            conn = ds.getConnection();
-            statement = conn.prepareStatement(sqlInitTable);
-            result = statement.execute();
-        } catch (SQLException e) {
-            log.error(e.getMessage(), e);
-        }finally {
-            close(conn, statement);
-        }
-        return result;
-    }
-
-    @Override
-    public Boolean initWorkers(Long beginId, Long endId) {
+    public Boolean initTableWorkers(Long beginId, Long endId) {
         if (beginId > endId) {
             log.error("endId must be greater than beginId");
             return false;
@@ -191,15 +174,22 @@ public class RaindropWorkerMySqlDAO implements IRaindropWorkerDAO {
         for (Long i = beginId; i<=endId; i++) {
             ls.add("("+i.toString()+", '2023-01-01 00:00:00')");
         }
-        String sql = "INSERT INTO " + tableName + "(`id`, `heartbeat_time`) VALUES " + String.join(",", ls) + ";";
+        String sql = " INSERT INTO " + tableName + "(`id`, `heartbeat_time`) VALUES " + String.join(",", ls) + ";";
 
         Connection conn = null;
         PreparedStatement statement = null;
         Boolean result =false;
         try {
             conn = ds.getConnection();
-            statement = conn.prepareStatement(sql);
-            result = statement.execute();
+
+            statement = conn.prepareStatement(sqlInitTable);
+            statement.addBatch(sql);
+
+            int[] results = statement.executeBatch();
+            if (Objects.equals(results.length, 2)) {
+                result = true;
+            }
+            statement.clearBatch();
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
         }finally {
@@ -328,7 +318,7 @@ public class RaindropWorkerMySqlDAO implements IRaindropWorkerDAO {
         }finally {
             close(conn, statement);
         }
-        if (Objects.equals(po, null) || Objects.equals(po.getId(), null)){
+        if (Objects.equals(po, null) || Objects.equals(po.getId(), 0)){
             raindropWorkerPO.setVersion(raindropWorkerPO.getVersion()+1);
             return raindropWorkerPO;
         }

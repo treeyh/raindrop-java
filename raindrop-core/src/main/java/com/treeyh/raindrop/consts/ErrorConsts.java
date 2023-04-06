@@ -14,6 +14,21 @@ public class ErrorConsts {
      */
     public final static Integer CHECK_CONFIG_ERROR = 1001;
 
+    /**
+     * 数据库初始化失败
+     */
+    public final static Integer INIT_DB_ERROR = 1002;
+
+    /**
+     * 初始化表结构失败
+     */
+    public final static Integer INIT_TABLE_ERROR = 1003;
+
+    /**
+     * 校验服务器时间和db时间间隔超过阈值
+     */
+    public final static Integer DATABASE_SERVER_TIME_INTERVAL_ERROR = 1004;
+
 
     /**
      * 服务端口设置错误
