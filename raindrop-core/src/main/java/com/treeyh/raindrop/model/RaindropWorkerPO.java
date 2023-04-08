@@ -6,7 +6,6 @@ import java.util.Date;
 
 @Data
 @ToString
-@NoArgsConstructor
 @RequiredArgsConstructor
 public class RaindropWorkerPO {
     private long id;

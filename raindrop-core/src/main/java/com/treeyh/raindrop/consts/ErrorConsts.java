@@ -34,6 +34,11 @@ public class ErrorConsts {
      */
     public final static Integer ACTIVE_WORKER_ERROR = 1005;
 
+    /**
+     * 获取新ID失败，超过最大序列值
+     */
+    public final static Integer NEW_ID_FAIL_SEQUENCE_EXCEEDS_MAX_VALUE = 1006;
+
 
     /**
      * 服务端口设置错误
@@ -149,4 +154,9 @@ public class ErrorConsts {
      * 流水号长度错误
      */
     public final static String SEQUENCE_LENGTH_ERROR = "Sequence number occupies at least 1 bit";
+
+    /**
+     * 序列超过最大值
+     */
+    public final static String SEQUENCE_EXCEEDS_MAX_VALUE = "Sequence exceeds maximum value";
 }

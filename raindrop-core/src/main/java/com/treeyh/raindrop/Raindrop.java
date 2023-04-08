@@ -27,11 +27,10 @@ public class Raindrop {
         return Instance.INSTANCE;
     }
 
-    public void Init(RaindropConfig config){
+    public void Init(RaindropConfig config) {
         try {
             // TODO 值修改是否返回
             config.checkConfig();
-
             idMode = config.getIdMode().toLowerCase();
 
             RaindropSnowflakeWorker.getInstance().init(config);
@@ -47,8 +46,8 @@ public class Raindrop {
         }
     }
 
-    public long newId() {
-        return 0;
+    public long newId() throws RaindropException {
+        return RaindropSnowflakeWorker.getInstance().newId();
     }
 
     public long newIdByCode(String code) {

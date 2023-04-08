@@ -44,7 +44,7 @@ public abstract class AbstractRaindropWorkerDAO {
             return;
         }
 
-        if (this.initTableWorkers(beginId, endId)) {
+        if (!this.initTableWorkers(beginId, endId)) {
             throw new RaindropException(ErrorConsts.INIT_TABLE_ERROR, "Init table fail.");
         }
     }

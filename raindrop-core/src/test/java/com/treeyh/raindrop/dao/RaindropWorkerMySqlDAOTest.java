@@ -3,13 +3,13 @@ package com.treeyh.raindrop.dao;
 import com.treeyh.raindrop.BaseTest;
 import com.treeyh.raindrop.dao.mysql.RaindropWorkerMySqlDAO;
 import com.treeyh.raindrop.exception.RaindropException;
+import com.treeyh.raindrop.model.RaindropWorkerPO;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 public class RaindropWorkerMySqlDAOTest {
@@ -18,14 +18,20 @@ public class RaindropWorkerMySqlDAOTest {
 
     @BeforeAll
     public static void initTest() {
-        raindropWorkerMySqlDAO = new RaindropWorkerMySqlDAO();
         try {
+            BaseTest.initTestDataSource();
+            raindropWorkerMySqlDAO = new RaindropWorkerMySqlDAO();
             raindropWorkerMySqlDAO.initConn(BaseTest.getDefaultRaindropDbConfig());
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @BeforeEach
+    public void dropTable() {
+        BaseTest.dropTable();
     }
 
     @Test
@@ -38,7 +44,15 @@ public class RaindropWorkerMySqlDAOTest {
     @Test
     public void testExistTable() {
         Boolean exist = raindropWorkerMySqlDAO.existTable();
-        Assertions.assertTrue(exist);
+        Assertions.assertFalse(exist);
+
+        Boolean result = raindropWorkerMySqlDAO.initTableWorkers(BaseTest.beginId, BaseTest.endId);
+        Assertions.assertTrue(result);
+
+        RaindropWorkerPO po = raindropWorkerMySqlDAO.getWorkerById(BaseTest.beginId);
+        Assertions.assertEquals(po.getId(), BaseTest.beginId);
+        Assertions.assertEquals(po.getCode(), "");
+        Assertions.assertEquals(po.getTimeUnit(), 2);
     }
 
     @Test

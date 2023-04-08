@@ -20,7 +20,7 @@ public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
 
     private HikariDataSource ds;
 
-    private static final String tableName = "soc_raindrop_worker_java";
+    private static final String tableName = "soc_raindrop_worker";
 
     private static final  String columnName = "value";
     private static final String sqlGetNow = "SELECT NOW() AS "+columnName+";";
@@ -171,22 +171,26 @@ public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
         }
 
         List<String> ls = new ArrayList<>();
+        int count = 0;
         for (Long i = beginId; i<=endId; i++) {
             ls.add("("+i.toString()+", '2023-01-01 00:00:00')");
+            count++;
         }
         String sql = " INSERT INTO " + tableName + "(`id`, `heartbeat_time`) VALUES " + String.join(",", ls) + ";";
 
         Connection conn = null;
-        PreparedStatement statement = null;
+        Statement statement = null;
         Boolean result =false;
         try {
             conn = ds.getConnection();
 
-            statement = conn.prepareStatement(sqlInitTable);
+            statement = conn.createStatement();
+            statement.addBatch(sqlInitTable);
             statement.addBatch(sql);
 
             int[] results = statement.executeBatch();
-            if (Objects.equals(results.length, 2)) {
+            if (Objects.equals(results.length, 2) &&
+                    Objects.equals(results[1], count)) {
                 result = true;
             }
             statement.clearBatch();
@@ -255,7 +259,6 @@ public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 pos.add(buildRaindropWorker(rs));
-                break;
             }
         } catch (SQLException e) {
             log.error(e.getMessage(), e);
@@ -282,7 +285,7 @@ public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
             statement.setLong(5, version);
             Integer count = statement.executeUpdate();
 
-            if (count != 0) {
+            if (count != 1) {
                 return null;
             }
 

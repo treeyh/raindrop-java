@@ -10,6 +10,7 @@ import com.treeyh.raindrop.model.ETimeUnit;
 import com.treeyh.raindrop.model.RaindropWorkerPO;
 import com.treeyh.raindrop.utils.DateUtils;
 import com.treeyh.raindrop.utils.NetworkUtils;
+import com.treeyh.raindrop.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLException;
@@ -59,8 +60,7 @@ public class RaindropSnowflakeWorker {
     // 获取新id同一时间的自增序列
     private AtomicLong newIdSeq;
 
-    // 基于code获取新id的生成code锁的锁
-    private Lock newCodeLockLock;
+
     // 获取基于code新id的锁
     private Map<String, Lock> newIdByCodeLockMap;
     // 上次的获取基于code新id时间序列
@@ -80,7 +80,7 @@ public class RaindropSnowflakeWorker {
         timeBackBitValue = new AtomicLong();
         newIdSeq = new AtomicLong();
 
-        newCodeLockLock = new ReentrantLock();
+
         newIdByCodeLockMap = new HashMap<>();
         newIdByCodeTimeSeqMap = new HashMap<>();
         newIdByCodeTimeBackValueMap = new HashMap<>();
@@ -118,8 +118,70 @@ public class RaindropSnowflakeWorker {
     }
 
 
-    public long newId() {
-        return 0;
+    public synchronized long newId() throws RaindropException {
+
+        long timeBackValue = timeBackBitValue.get();
+        long timestamp = nowTimeSeq.get();
+        long lastTimeSeq = newIdLastTimeSeq.get();
+
+        long seq = 0;
+        if (Objects.equals(lastTimeSeq, timestamp)) {
+            // 同时间戳重复获取id
+            seq = newIdSeq.incrementAndGet();
+
+            if (seq > maxIdSeq) {
+                // 超过了序列最大值
+                // 毫秒，秒还能抢救一下
+                if (Objects.equals(timeUnit, ETimeUnit.Millisecond.getType())) {
+                    if (log.isDebugEnabled()) {
+                        log.debug(String.format("millisecond unit sleep %d, seq: %d, maxIdSeq: %d", timestamp, seq, maxIdSeq));
+                    }
+                    while (true) {
+                        timestamp = nowTimeSeq.get();
+                        if (timestamp > lastTimeSeq) {
+                            break;
+                        }
+                    }
+                } else if (Objects.equals(timeUnit, ETimeUnit.Second.getType())) {
+                    if (log.isDebugEnabled()) {
+                        log.debug(String.format("second unit sleep %d, seq: %d, maxIdSeq: %d", timestamp, seq, maxIdSeq));
+                    }
+                    while (true) {
+                        Utils.sleep(10);
+                        timestamp = nowTimeSeq.get();
+                        if (timestamp > lastTimeSeq) {
+                            break;
+                        }
+                    }
+                } else {
+                    // 不是毫秒或秒时间单位，不等待返回直接返回错误
+                    log.error(String.format("timeUnit: %d, timeSeq: %d, seq: %d, maxIdSeq: %d",
+                            timeUnit, timestamp, seq, maxIdSeq));
+                    throw new RaindropException(ErrorConsts.NEW_ID_FAIL_SEQUENCE_EXCEEDS_MAX_VALUE, ErrorConsts.SEQUENCE_EXCEEDS_MAX_VALUE);
+                }
+                seq = 0L;
+                newIdSeq.set(0);
+            } else {
+                seq = 0L;
+                newIdSeq.set(0);
+            }
+        }
+
+        if (lastTimeSeq > timestamp) {
+
+            log.error(String.format("timeUnit:%d, lastTimeSeq: %d, timestamp: %d, Server clock moved backwards.", timeUnit, lastTimeSeq, timestamp));
+            // timeBackValue 取反，避免重复
+            timeBackValue = timeBackValue ^ 1;
+            timeBackBitValue.set(timeBackValue);
+        }
+        if (!Objects.equals(lastTimeSeq, timestamp)) {
+            newIdLastTimeSeq.set(timestamp);
+        }
+        return ((timestamp - startTime) << timeStampShift) |
+                (workerId << workerIdShift) |
+                (timeBackValue << timeBackShift) |
+                (seq << seqShift) |
+                endBitsValue;
     }
 
     public long newIdByCode(){
@@ -159,7 +221,9 @@ public class RaindropSnowflakeWorker {
         String mac = NetworkUtils.getLocalIpMac();
         workerCode = localIp + "#" + config.getServicePort() + "#" + config.getTimeUnit().getType() + "#" + mac;
 
-        if (config.isPriorityEqualCodeWorkId() && (Objects.equals(config.getTimeUnit().getType(), ETimeUnit.Millisecond) || Objects.equals(config.getTimeUnit().getType(), ETimeUnit.Second))) {
+        if (config.isPriorityEqualCodeWorkId() &&
+                (Objects.equals(config.getTimeUnit().getType(), ETimeUnit.Millisecond) ||
+                        Objects.equals(config.getTimeUnit().getType(), ETimeUnit.Second))) {
             // 使用已有code
             RaindropWorkerPO po = raindropWorkerDAO.getBeforeWorker(workerCode);
 
@@ -184,6 +248,7 @@ public class RaindropSnowflakeWorker {
 
         List<RaindropWorkerPO> pos = raindropWorkerDAO.queryFreeWorkers(heartbeatMaxTime);
         if (Objects.equals(pos, null) || pos.isEmpty()) {
+            log.error("Failed to get an available Worker. heartbeatMaxTime:"+DateUtils.date2Str(heartbeatMaxTime));
             return null;
         }
 
