@@ -266,7 +266,7 @@ public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
     }
 
     @Override
-    public RaindropWorkerPO activateWorker(Long id, String code, ETimeUnit timeUnit, Long version) {
+    public RaindropWorkerPO activateWorker(Long id, String code, int timeUnit, Long version) {
         String sql = "UPDATE `" + tableName + "` SET `code` = ?, `time_unit` = ?, `version` = `version` + 1, `heartbeat_time` = ? WHERE `id` = ? AND `version` = ? ";
 
         Connection conn = null;
@@ -276,7 +276,7 @@ public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
             conn = ds.getConnection();
             statement = conn.prepareStatement(sql);
             statement.setString(1, code);
-            statement.setInt(2, timeUnit.getType());
+            statement.setInt(2, timeUnit);
             statement.setString(3, DateUtils.date2Str(new Date()));
             statement.setLong(4, id);
             statement.setLong(5, version);
@@ -309,8 +309,8 @@ public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
             statement.setLong(2, raindropWorkerPO.getId());
             statement.setLong(3, raindropWorkerPO.getVersion());
             Integer count = statement.executeUpdate();
-            if (count != 0) {
-                return null;
+            if (count != 1) {
+                log.error("heartbeat worker fail!!! id:"+raindropWorkerPO.getId()+" result: "+ count);
             }
             po = getWorkerById(raindropWorkerPO.getId());
         } catch (SQLException e) {

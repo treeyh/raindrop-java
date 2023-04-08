@@ -29,6 +29,11 @@ public class ErrorConsts {
      */
     public final static Integer DATABASE_SERVER_TIME_INTERVAL_ERROR = 1004;
 
+    /**
+     * 获取可用的worker失败
+     */
+    public final static Integer ACTIVE_WORKER_ERROR = 1005;
+
 
     /**
      * 服务端口设置错误

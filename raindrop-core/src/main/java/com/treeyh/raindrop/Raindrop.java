@@ -1,16 +1,17 @@
 package com.treeyh.raindrop;
 
 import com.treeyh.raindrop.config.RaindropConfig;
-import com.treeyh.raindrop.consts.Consts;
 import com.treeyh.raindrop.consts.ErrorConsts;
 import com.treeyh.raindrop.exception.RaindropException;
-import com.treeyh.raindrop.worker.RaindropWorker;
+import com.treeyh.raindrop.worker.RaindropSnowflakeWorker;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLException;
 
 @Slf4j
 public class Raindrop {
+
+    private String idMode;
 
     private Raindrop(){}
 
@@ -31,7 +32,9 @@ public class Raindrop {
             // TODO 值修改是否返回
             config.checkConfig();
 
-            RaindropWorker.getInstance().initDb(config);
+            idMode = config.getIdMode().toLowerCase();
+
+            RaindropSnowflakeWorker.getInstance().init(config);
         } catch (RaindropException e) {
             log.error(e.getMessage(), e);
             System.exit(e.getCode());
@@ -42,6 +45,13 @@ public class Raindrop {
             log.error(e.getMessage(), e);
             System.exit(ErrorConsts.INIT_DB_ERROR);
         }
+    }
 
+    public long newId() {
+        return 0;
+    }
+
+    public long newIdByCode(String code) {
+        return 0;
     }
 }

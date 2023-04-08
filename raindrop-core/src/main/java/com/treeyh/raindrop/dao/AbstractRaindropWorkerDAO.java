@@ -100,7 +100,7 @@ public abstract class AbstractRaindropWorkerDAO {
      * @param version
      * @return
      */
-    public abstract RaindropWorkerPO activateWorker(Long id, String code, ETimeUnit timeUnit, Long version);
+    public abstract RaindropWorkerPO activateWorker(Long id, String code, int timeUnit, Long version);
 
     /**
      * 心跳
