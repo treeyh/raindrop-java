@@ -13,7 +13,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Date;
-import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.*;
 
 @Slf4j
 public class RaindropTest {
@@ -37,7 +39,45 @@ public class RaindropTest {
     }
 
     @Test
-    public void testNewId() {
+    public void testNewIdBenchmark() {
+
+//        Raindrop.getInstance().Init(BaseTest.getTestMillisecondConfig());
+
+        Raindrop.getInstance().Init(BaseTest.getTestSecondConfig());
+
+        Utils.sleep(3 * 1000L);
+
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+
+        for (int i =0 ; i < 1; i++){
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        benchmarkNewId(1, 10000000, true);
+                    } catch (RaindropException e) {
+                        log.error(e.getMessage(), e);
+                    } finally {
+                        countDownLatch.countDown();
+                    }
+                }
+            };
+            executor.submit(runnable);
+        }
+        //关闭线程处理
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+        }
+        //关闭线程池
+        executor.shutdown();
+    }
+
+    @Test
+    public void testNewIdLongTime() {
 
         Raindrop.getInstance().Init(BaseTest.getTestMillisecondConfig());
 
@@ -57,5 +97,29 @@ public class RaindropTest {
                 break;
             }
         }
+    }
+
+    /**
+     *
+     */
+    private void benchmarkNewId(int index, int count, boolean logFlag) throws RaindropException {
+        Map<Long, Boolean> idMap = new HashMap<>();
+
+        long start = System.currentTimeMillis();
+
+        for (int i = 0; i < count; i ++) {
+            Long id = Raindrop.getInstance().newId();
+
+            if (null != idMap.getOrDefault(id, null)) {
+                log.error(String.format("benchmarkNewId duplicate id generated: %d", id));
+            }
+            idMap.put(id, true);
+            if (logFlag && i%100000 == 0) {
+                log.info(String.format("benchmarkNewId new id index: %d id: %d ", i, id));
+            }
+        }
+
+        long end = System.currentTimeMillis();
+        log.info(String.format("index:%d, count:%d, time:%d", index, count, (end- start)));
     }
 }

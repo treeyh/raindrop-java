@@ -59,6 +59,24 @@ public class BaseTest {
                 .build();
     }
 
+    public static RaindropConfig getTestSecondConfig() {
+        return RaindropConfig.builder()
+                .dbConfig(getDefaultRaindropDbConfig())
+                .idMode(Consts.ID_MODE_SNOWFLAKE)
+                .servicePort(servicePort)
+                .timeUnit(ETimeUnit.Second)
+                .startTimeStamp(startTimeStamp)
+                .timeStampLength(31)
+                .priorityEqualCodeWorkId(false)
+                .workIdLength(4)
+                .serviceMinWorkId(beginId)
+                .serviceMaxWorkId(endId)
+                .timeBackBitValue(0)
+                .endBitsLength(1)
+                .endBitValue(0)
+                .build();
+    }
+
     /**
      * 初始化测试数据源
      */
@@ -114,5 +132,19 @@ public class BaseTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void testTest() {
+        AtomicLong seq  = new AtomicLong();
+
+        System.out.println(seq.incrementAndGet());
+        System.out.println(seq.incrementAndGet());
+        System.out.println(seq.incrementAndGet());
+        System.out.println(seq.incrementAndGet());
+        System.out.println(seq.incrementAndGet());
+        System.out.println(seq.incrementAndGet());
+        System.out.println(seq.incrementAndGet());
+
     }
 }

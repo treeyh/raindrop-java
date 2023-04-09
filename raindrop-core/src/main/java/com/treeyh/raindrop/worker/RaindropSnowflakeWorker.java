@@ -47,7 +47,7 @@ public class RaindropSnowflakeWorker {
     // 开始计算时间戳，毫秒
     private long startTime;
 
-    // 当前时间流水，当前时刻毫秒 - startTime,换算时间单位取整
+    // 当前时间流水，当前时刻毫秒
     private AtomicLong nowTimeSeq;
 
     // 获取新id的锁
@@ -162,10 +162,10 @@ public class RaindropSnowflakeWorker {
                 }
                 seq = 0L;
                 newIdSeq.set(0);
-            } else {
-                seq = 0L;
-                newIdSeq.set(0);
             }
+        } else {
+            seq = 0L;
+            newIdSeq.set(0);
         }
 
         if (lastTimeSeq > timestamp) {
@@ -381,7 +381,8 @@ public class RaindropSnowflakeWorker {
      * 计算当前时间戳流水
      */
     private void calcNowTimeSeq() {
-        long seq = calcTimestamp(System.currentTimeMillis(), timeUnit);
+        long now = System.currentTimeMillis();
+        long seq = calcTimestamp(now, timeUnit);
         nowTimeSeq.set(seq);
     }
 
@@ -420,7 +421,6 @@ public class RaindropSnowflakeWorker {
             if (log.isDebugEnabled()) {
                 log.debug("worker heartbeat worker:"+worker.toString());
             }
-            Date now = new Date(System.currentTimeMillis());
             if ((worker.getHeartbeatTime().getTime() > worker.getUpdateTime().getTime() + Consts.HEARTBEAT_TIME_INTERVAL) ||
                     (worker.getHeartbeatTime().getTime() < worker.getUpdateTime().getTime() - Consts.HEARTBEAT_TIME_INTERVAL)) {
                 log.error("Server and database time gap exceeds threshold!!! heartbeatTime:" +
