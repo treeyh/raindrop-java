@@ -54,6 +54,8 @@ public class RaindropSnowflakeWorker {
     private Lock newIdLock;
     // 上次的获取新id时间序列
     private AtomicLong newIdLastTimeSeq;
+    // 时间回拨初始值
+    private long timeBackBitInitValue;
     // 时间回拨值
     private AtomicLong timeBackBitValue;
     // 获取新id同一时间的自增序列
@@ -66,6 +68,8 @@ public class RaindropSnowflakeWorker {
     private Map<String, AtomicLong> newIdByCodeTimeSeqMap;
     // 获取基于code新id同一时间的自增序列
     private Map<String, AtomicLong> newIdByCodeSeqMap;
+    // 获取基于时间回溯标识
+    private Map<String, AtomicLong> newIdByCodeTimeBackValueMap;
 
 
     private AbstractRaindropWorkerDAO raindropWorkerDAO;
@@ -77,8 +81,8 @@ public class RaindropSnowflakeWorker {
         timeBackBitValue = new AtomicLong();
         newIdSeq = new AtomicLong();
 
-
         newIdByCodeLockMap = new ConcurrentHashMap<>();
+        newIdByCodeTimeBackValueMap = new ConcurrentHashMap<>();
         newIdByCodeTimeSeqMap = new ConcurrentHashMap<>();
         newIdByCodeSeqMap = new ConcurrentHashMap<>();
     }
@@ -194,7 +198,7 @@ public class RaindropSnowflakeWorker {
 
         try {
             lock.lock();
-            long timeBackValue = timeBackBitValue.get();
+            long timeBackValue = newIdByCodeTimeBackValueMap.get(code).get();
             long timestamp = nowTimeSeq.get();
 
             AtomicLong codeIdSeq = newIdByCodeSeqMap.get(code);
@@ -251,7 +255,7 @@ public class RaindropSnowflakeWorker {
                         code, timeUnit, lastTimeSeq, timestamp));
                 // timeBackValue 取反，避免重复
                 timeBackValue = timeBackValue ^ 1;
-                timeBackBitValue.set(timeBackValue);
+                newIdByCodeTimeBackValueMap.get(code).set(timeBackValue);
             }
 
             if(!Objects.equals(lastTimeSeq, timestamp)) {
@@ -354,7 +358,7 @@ public class RaindropSnowflakeWorker {
     private void initParams(RaindropConfig config) {
         timeUnit = config.getTimeUnit().getType();
         workerId = worker.getId();
-
+        timeBackBitInitValue = config.getTimeBackBitValue();
         timeBackBitValue.set(config.getTimeBackBitValue());
         endBitsValue = config.getEndBitValue();
 
@@ -459,8 +463,12 @@ public class RaindropSnowflakeWorker {
         }
         AtomicLong lastTime = new AtomicLong(0);
         AtomicLong seq = new AtomicLong(0);
+        AtomicLong timeBackValue = new AtomicLong(timeBackBitInitValue);
         lock = new ReentrantLock();
+
         newIdByCodeLockMap.put(code, lock);
+        newIdByCodeTimeBackValueMap.put(code,timeBackValue);
+
         newIdByCodeTimeSeqMap.put(code, lastTime);
         newIdByCodeSeqMap.put(code, seq);
     }

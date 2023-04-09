@@ -3,6 +3,7 @@ package com.treeyh.raindrop;
 import com.treeyh.raindrop.config.RaindropConfig;
 import com.treeyh.raindrop.config.RaindropDbConfig;
 import com.treeyh.raindrop.consts.Consts;
+import com.treeyh.raindrop.exception.RaindropException;
 import com.treeyh.raindrop.model.ETimeUnit;
 import com.treeyh.raindrop.utils.DateUtils;
 import com.zaxxer.hikari.HikariDataSource;
@@ -14,6 +15,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -146,5 +149,31 @@ public class BaseTest {
         System.out.println(seq.incrementAndGet());
         System.out.println(seq.incrementAndGet());
 
+    }
+
+
+
+    /**
+     *
+     */
+    public static void benchmarkNewId(int index, int count, boolean logFlag) throws RaindropException {
+        Map<Long, Boolean> idMap = new HashMap<>();
+
+        long start = System.currentTimeMillis();
+
+        for (int i = 0; i < count; i ++) {
+            Long id = Raindrop.getInstance().newId();
+
+            if (null != idMap.getOrDefault(id, null)) {
+                log.error(String.format("benchmarkNewId duplicate id generated: %d", id));
+            }
+            idMap.put(id, true);
+            if (logFlag && i%100000 == 0) {
+                log.info(String.format("benchmarkNewId new id index: %d id: %d ", i, id));
+            }
+        }
+
+        long end = System.currentTimeMillis();
+        log.info(String.format("index:%d, count:%d, time:%d", index, count, (end- start)));
     }
 }

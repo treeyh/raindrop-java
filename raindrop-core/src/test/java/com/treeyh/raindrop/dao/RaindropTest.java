@@ -47,16 +47,16 @@ public class RaindropTest {
 
         Utils.sleep(3 * 1000L);
 
-        CountDownLatch countDownLatch = new CountDownLatch(1);
+        CountDownLatch countDownLatch = new CountDownLatch(5);
 
         ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, 10, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 
-        for (int i =0 ; i < 1; i++){
+        for (int i =0 ; i < 5; i++){
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        benchmarkNewId(1, 10000000, true);
+                        BaseTest.benchmarkNewId(1, 10000000, true);
                     } catch (RaindropException e) {
                         log.error(e.getMessage(), e);
                     } finally {
@@ -97,29 +97,5 @@ public class RaindropTest {
                 break;
             }
         }
-    }
-
-    /**
-     *
-     */
-    private void benchmarkNewId(int index, int count, boolean logFlag) throws RaindropException {
-        Map<Long, Boolean> idMap = new HashMap<>();
-
-        long start = System.currentTimeMillis();
-
-        for (int i = 0; i < count; i ++) {
-            Long id = Raindrop.getInstance().newId();
-
-            if (null != idMap.getOrDefault(id, null)) {
-                log.error(String.format("benchmarkNewId duplicate id generated: %d", id));
-            }
-            idMap.put(id, true);
-            if (logFlag && i%100000 == 0) {
-                log.info(String.format("benchmarkNewId new id index: %d id: %d ", i, id));
-            }
-        }
-
-        long end = System.currentTimeMillis();
-        log.info(String.format("index:%d, count:%d, time:%d", index, count, (end- start)));
     }
 }
