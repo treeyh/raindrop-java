@@ -63,7 +63,7 @@ public class BaseTest {
      * 初始化测试数据源
      */
     public static void initTestDataSource() {
-        if (!Objects.equals(ds, null)) {
+        if (ds != null) {
             return;
         }
 

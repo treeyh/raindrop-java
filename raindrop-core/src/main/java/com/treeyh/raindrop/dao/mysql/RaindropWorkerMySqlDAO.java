@@ -321,7 +321,7 @@ public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
         }finally {
             close(conn, statement);
         }
-        if (Objects.equals(po, null) || Objects.equals(po.getId(), 0)){
+        if (null == po || Objects.equals(po.getId(), 0)){
             raindropWorkerPO.setVersion(raindropWorkerPO.getVersion()+1);
             return raindropWorkerPO;
         }

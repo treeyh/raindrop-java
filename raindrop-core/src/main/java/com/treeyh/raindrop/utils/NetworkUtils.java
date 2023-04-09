@@ -1,5 +1,7 @@
 package com.treeyh.raindrop.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -13,6 +15,7 @@ import java.util.Objects;
  * @create: 2023-04-07 09:20
  * @email: tree@ejyi.com
  **/
+@Slf4j
 public class NetworkUtils {
 
     private final static String loopIp = "127.0.0.1";
@@ -25,7 +28,7 @@ public class NetworkUtils {
     public static String getLocalIp() {
         InetAddress candidateAddress = getLocalInet();
 
-        return Objects.equals(candidateAddress, null) ? loopIp : candidateAddress.getHostAddress();
+        return null == candidateAddress ? loopIp : candidateAddress.getHostAddress();
     }
 
 
@@ -35,7 +38,7 @@ public class NetworkUtils {
      */
     public static String getLocalIpMac() {
         InetAddress candidateAddress = getLocalInet();
-        if (Objects.equals(candidateAddress, null)) {
+        if (null == candidateAddress) {
             return "";
         }
         byte[] mac = new byte[0];
@@ -43,7 +46,7 @@ public class NetworkUtils {
             // NetworkInterface.getByInetAddress(ia) 根据ip信息获取网卡信息
             mac = NetworkInterface.getByInetAddress(candidateAddress).getHardwareAddress();
         } catch (SocketException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
         StringBuilder sb = new StringBuilder("");
@@ -96,7 +99,7 @@ public class NetworkUtils {
             // 如果出去loopback回环地之外无其它地址了，那就回退到原始方案吧
             return candidateAddress == null ? InetAddress.getLocalHost() : candidateAddress;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return null;
     }

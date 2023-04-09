@@ -45,12 +45,20 @@ public class Raindrop {
             System.exit(ErrorConsts.INIT_DB_ERROR);
         }
     }
-
+    /**
+     * 获取新id
+     * @return
+     * @throws RaindropException 时间回溯，且时间单位不是毫秒和秒，会抛该异常
+     */
     public long newId() throws RaindropException {
         return RaindropSnowflakeWorker.getInstance().newId();
     }
-
-    public long newIdByCode(String code) {
-        return 0;
+    /**
+     * 根据编号获取新id
+     * @return
+     * @throws RaindropException 时间回溯，且时间单位不是毫秒和秒，会抛该异常
+     */
+    public long newIdByCode(String code) throws RaindropException {
+        return RaindropSnowflakeWorker.getInstance().newIdByCode(code);
     }
 }
