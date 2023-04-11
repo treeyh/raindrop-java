@@ -119,6 +119,14 @@ public class RaindropSnowflakeWorker {
 
 
     /**
+     * 获取workerId
+     * @return
+     */
+    public long getWorkerId() {
+        return null == worker ? 0 : workerId;
+    }
+
+    /**
      * 获取新id
      * @return
      * @throws RaindropException 时间回溯，且时间单位不是毫秒和秒，会抛该异常
@@ -303,7 +311,11 @@ public class RaindropSnowflakeWorker {
      * @param config
      * @return
      */
-    private RaindropWorkerPO activateWorker(RaindropConfig config) {
+    private synchronized RaindropWorkerPO activateWorker(RaindropConfig config) {
+        if (null != worker) {
+            return worker;
+        }
+
         String localIp = NetworkUtils.getLocalIp();
         String mac = NetworkUtils.getLocalIpMac();
         workerCode = localIp + "#" + config.getServicePort() + "#" + config.getTimeUnit().getType() + "#" + mac;

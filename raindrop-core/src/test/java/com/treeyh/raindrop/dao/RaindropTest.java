@@ -2,10 +2,12 @@ package com.treeyh.raindrop.dao;
 
 import com.treeyh.raindrop.BaseTest;
 import com.treeyh.raindrop.Raindrop;
+import com.treeyh.raindrop.config.RaindropConfig;
 import com.treeyh.raindrop.dao.mysql.RaindropWorkerMySqlDAO;
 import com.treeyh.raindrop.exception.RaindropException;
 import com.treeyh.raindrop.utils.DateUtils;
 import com.treeyh.raindrop.utils.Utils;
+import com.treeyh.raindrop.worker.RaindropSnowflakeWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -38,9 +40,34 @@ public class RaindropTest {
         Assertions.assertTrue(true);
     }
 
+//    @Test
+//    public void testInitFullWorker() {
+//        RaindropConfig config = BaseTest.getTestSecondConfig();
+//
+//        long workerCount = config.getServiceMaxWorkId() - config.getServiceMinWorkId() + 1;
+//        for (long i = 0; i < workerCount ; i++) {
+//            Raindrop.getInstance().Init(config);
+//        }
+//        log.info("next init should fail.");
+//        Raindrop.getInstance().Init(config);
+//        Assertions.fail("The above should not be able to initialize");
+//    }
+
+    @Test
+    public void testInitRepeatabilityWorker() {
+        RaindropConfig config = BaseTest.getTestSecondConfig();
+
+        Raindrop.getInstance().Init(config);
+        long workerId = RaindropSnowflakeWorker.getInstance().getWorkerId();
+
+        Raindrop.getInstance().Init(config);
+        long workerId2 = RaindropSnowflakeWorker.getInstance().getWorkerId();
+
+        Assertions.assertEquals(workerId, workerId2);
+    }
+
     @Test
     public void testNewIdBenchmark() {
-
 //        Raindrop.getInstance().Init(BaseTest.getTestMillisecondConfig());
 
         Raindrop.getInstance().Init(BaseTest.getTestSecondConfig());
