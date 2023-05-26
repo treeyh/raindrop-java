@@ -15,6 +15,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * @author: Treeyh
+ * @version: 1.0
+ * @description:
+ * @create: 2023-04-06 17:58
+ * @email: tree@ejyi.com
+ **/
 @Slf4j
 public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
 

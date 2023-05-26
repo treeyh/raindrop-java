@@ -1,5 +1,12 @@
 package com.treeyh.raindrop.consts;
 
+/**
+ * @author: Treeyh
+ * @version: 1.0
+ * @description:
+ * @create: 2023-04-06 17:58
+ * @email: tree@ejyi.com
+ **/
 public class Consts {
 
     /**

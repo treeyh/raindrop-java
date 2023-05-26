@@ -4,6 +4,13 @@ import lombok.*;
 
 import java.util.Date;
 
+/**
+ * @author: Treeyh
+ * @version: 1.0
+ * @description:
+ * @create: 2023-04-06 17:58
+ * @email: tree@ejyi.com
+ **/
 @Data
 @ToString
 @RequiredArgsConstructor

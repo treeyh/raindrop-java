@@ -2,6 +2,13 @@ package com.treeyh.raindrop.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @author: Treeyh
+ * @version: 1.0
+ * @description:
+ * @create: 2023-04-06 17:58
+ * @email: tree@ejyi.com
+ **/
 @Slf4j
 public class Utils {
 

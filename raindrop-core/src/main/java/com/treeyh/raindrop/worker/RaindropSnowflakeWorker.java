@@ -20,6 +20,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * @author: Treeyh
+ * @version: 1.0
+ * @description:
+ * @create: 2023-04-06 17:58
+ * @email: tree@ejyi.com
+ **/
 @Slf4j
 public class RaindropSnowflakeWorker {
 
@@ -33,42 +40,75 @@ public class RaindropSnowflakeWorker {
     private int timeUnit;
     private long endBitsValue;
 
-    // 时间戳位移位数
+    /**
+     * 时间戳位移位数
+     */
     private int timeStampShift;
-    // 位移位数
+    /**
+     * 位移位数
+     */
     private int workerIdShift;
-    // 时间回拨位移位数
+    /**
+     * 时间回拨位移位数
+     */
     private int timeBackShift;
-    // 流水号移位数
+    /**
+     * 流水号移位数
+     */
     private int seqShift;
 
-    // 最大的id序列值
+    /**
+     * 最大的id序列值
+     */
     private long maxIdSeq;
-    // 开始计算时间戳，毫秒
+    /**
+     * 开始计算时间戳，毫秒
+     */
     private long startTime;
 
-    // 当前时间流水，当前时刻毫秒
+    /**
+     * 当前时间流水，当前时刻毫秒
+     */
     private AtomicLong nowTimeSeq;
 
-    // 获取新id的锁
+    /**
+     * 获取新id的锁
+     */
     private Lock newIdLock;
-    // 上次的获取新id时间序列
+    /**
+     * 上次的获取新id时间序列
+     */
     private AtomicLong newIdLastTimeSeq;
-    // 时间回拨初始值
+    /**
+     * 时间回拨初始值
+     */
     private long timeBackBitInitValue;
-    // 时间回拨值
+    /**
+     * 时间回拨值
+     */
     private AtomicLong timeBackBitValue;
-    // 获取新id同一时间的自增序列
+
+    /**
+     * 获取新id同一时间的自增序列
+     */
     private AtomicLong newIdSeq;
 
 
-    // 获取基于code新id的锁
+    /**
+     * 获取基于code新id的锁
+     */
     private Map<String, Lock> newIdByCodeLockMap;
-    // 上次的获取基于code新id时间序列
+    /**
+     * 上次的获取基于code新id时间序列
+     */
     private Map<String, AtomicLong> newIdByCodeTimeSeqMap;
-    // 获取基于code新id同一时间的自增序列
+    /**
+     * 获取基于code新id同一时间的自增序列
+     */
     private Map<String, AtomicLong> newIdByCodeSeqMap;
-    // 获取基于时间回溯标识
+    /**
+     * 获取基于时间回溯标识
+     */
     private Map<String, AtomicLong> newIdByCodeTimeBackValueMap;
 
 
@@ -204,8 +244,8 @@ public class RaindropSnowflakeWorker {
             lock = newIdByCodeLockMap.get(code);
         }
 
+        lock.lock();
         try {
-            lock.lock();
             long timeBackValue = newIdByCodeTimeBackValueMap.get(code).get();
             long timestamp = nowTimeSeq.get();
 
@@ -417,6 +457,8 @@ public class RaindropSnowflakeWorker {
             case 5:
                 st = st / (24 * 60 * 60 * 1000L);
                 break;
+            default:
+                st = st;
         }
         return st;
     }

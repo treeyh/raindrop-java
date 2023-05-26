@@ -12,6 +12,13 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author: Treeyh
+ * @version: 1.0
+ * @description:
+ * @create: 2023-04-06 17:58
+ * @email: tree@ejyi.com
+ **/
 @Slf4j
 public abstract class AbstractRaindropWorkerDAO {
 

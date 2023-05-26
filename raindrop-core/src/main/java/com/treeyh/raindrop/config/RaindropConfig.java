@@ -14,6 +14,13 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Date;
 import java.util.Objects;
 
+/**
+ * @author: Treeyh
+ * @version: 1.0
+ * @description:
+ * @create: 2023-04-06 17:58
+ * @email: tree@ejyi.com
+ **/
 @Builder
 @ToString
 @Data
@@ -87,6 +94,11 @@ public class RaindropConfig {
 
 
     /**
+     * 最大端口
+     */
+    private final static int maxPort = 65535;
+
+    /**
      * 验证配置
      * @throws RaindropException
      */
@@ -96,7 +108,7 @@ public class RaindropConfig {
             this.idMode = Consts.ID_MODE_SNOWFLAKE;
         }
 
-        if (this.servicePort < 0 || this.servicePort > 65535) {
+        if (this.servicePort < 0 || this.servicePort > maxPort) {
             log.error(ErrorConsts.SERVER_PORT_ERROR + "; servicePort:" + this.servicePort);
             throw new RaindropException(ErrorConsts.CHECK_CONFIG_ERROR, ErrorConsts.SERVER_PORT_ERROR);
         }
