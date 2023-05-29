@@ -5,6 +5,7 @@ import com.treeyh.raindrop.Raindrop;
 import com.treeyh.raindrop.config.RaindropConfig;
 import com.treeyh.raindrop.dao.mysql.RaindropWorkerMySqlDAO;
 import com.treeyh.raindrop.exception.RaindropException;
+import com.treeyh.raindrop.model.ETimeUnit;
 import com.treeyh.raindrop.utils.DateUtils;
 import com.treeyh.raindrop.utils.Utils;
 import com.treeyh.raindrop.worker.RaindropSnowflakeWorker;
@@ -45,6 +46,12 @@ public class RaindropTest {
         Utils.sleep(1200 * 1000L);
 
         Assertions.assertTrue(true);
+    }
+
+    @Test
+    public void testTest(){
+        System.out.println(ETimeUnit.Day == ETimeUnit.Day);
+        System.out.println(ETimeUnit.Minuter == ETimeUnit.Day);
     }
 
 //    @Test

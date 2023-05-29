@@ -72,10 +72,6 @@ public class RaindropSnowflakeWorker {
     private AtomicLong nowTimeSeq;
 
     /**
-     * 获取新id的锁
-     */
-    private Lock newIdLock;
-    /**
      * 上次的获取新id时间序列
      */
     private AtomicLong newIdLastTimeSeq;
@@ -116,7 +112,6 @@ public class RaindropSnowflakeWorker {
 
     private RaindropSnowflakeWorker() {
         nowTimeSeq = new AtomicLong();
-        newIdLock = new ReentrantLock();
         newIdLastTimeSeq = new AtomicLong();
         timeBackBitValue = new AtomicLong();
         newIdSeq = new AtomicLong();
@@ -259,7 +254,6 @@ public class RaindropSnowflakeWorker {
                 if (seq > maxIdSeq) {
                     // 超过了序列最大值
                     // 毫秒，秒还能抢救一下
-
                     if (Objects.equals(timeUnit, ETimeUnit.Millisecond.getType())) {
                         if (log.isDebugEnabled()) {
                             log.debug(String.format("code:%s, millisecond unit sleep %d, seq: %d, maxIdSeq: %d", code, timestamp, seq, maxIdSeq));
@@ -361,8 +355,8 @@ public class RaindropSnowflakeWorker {
         workerCode = localIp + "#" + config.getServicePort() + "#" + config.getTimeUnit().getType() + "#" + mac;
 
         if (config.isPriorityEqualCodeWorkId() &&
-                (Objects.equals(config.getTimeUnit().getType(), ETimeUnit.Millisecond) ||
-                        Objects.equals(config.getTimeUnit().getType(), ETimeUnit.Second))) {
+                (ETimeUnit.Millisecond == config.getTimeUnit() ||
+                        ETimeUnit.Second == config.getTimeUnit())) {
             // 使用已有code
             RaindropWorkerPO po = raindropWorkerDAO.getBeforeWorker(workerCode);
 
@@ -377,11 +371,12 @@ public class RaindropSnowflakeWorker {
 
         Date heartbeatMaxTime = (new Date(System.currentTimeMillis() - (4 * Consts.HEARTBEAT_TIME_INTERVAL)));
 
-        if (Objects.equals(config.getTimeUnit().getType(), ETimeUnit.Minuter)) {
+        if (ETimeUnit.Minuter == config.getTimeUnit()) {
             heartbeatMaxTime = (new Date(heartbeatMaxTime.getTime() - (1 * 60 * 1000L)));
-        } else if (Objects.equals(config.getTimeUnit().getType(), ETimeUnit.Hour)) {
+        } else if (ETimeUnit.Hour == config.getTimeUnit()) {
             heartbeatMaxTime = (new Date(heartbeatMaxTime.getTime() - (1 * 60 * 60 * 1000L)));
-        } else if (Objects.equals(config.getTimeUnit().getType(), ETimeUnit.Day)) {
+        } else if (ETimeUnit.Day == config.getTimeUnit()) {
+            // 一天
             heartbeatMaxTime = (new Date(heartbeatMaxTime.getTime() - (1 * 24 * 60 * 60 * 1000L)));
         }
 
