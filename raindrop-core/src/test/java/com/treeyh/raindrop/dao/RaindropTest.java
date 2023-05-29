@@ -118,13 +118,17 @@ public class RaindropTest {
 
         long endTime = System.currentTimeMillis() + (60 * 60 * 1000L);
         Utils.sleep(3000L);
+        int index = 0;
         while (true) {
+            index++;
             Utils.sleep(100);
             long time = System.currentTimeMillis();
 
             try {
                 long id = Raindrop.getInstance().newId();
-                log.info(DateUtils.date2Str(new Date(time)) + " id:" + id);
+                if (index % 300 == 0) {
+                    log.info(DateUtils.date2Str(new Date(time)) + " id:" + id);
+                }
             } catch (RaindropException e) {
                 log.error(e.getMessage(), e);
             }

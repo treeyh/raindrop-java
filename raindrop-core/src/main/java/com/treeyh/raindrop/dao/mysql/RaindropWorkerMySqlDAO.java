@@ -254,7 +254,7 @@ public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
 
     @Override
     public List<RaindropWorkerPO> queryFreeWorkers(Date heartbeatTime) {
-        String sql = sqlPreSelectRow + " AND `heartbeat_time` < ? ";
+        String sql = sqlPreSelectRow + " AND `heartbeat_time` < ? ORDER BY `heartbeat_time` ASC ";
 
         Connection conn = null;
         PreparedStatement statement = null;
