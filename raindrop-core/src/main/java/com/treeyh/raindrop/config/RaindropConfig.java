@@ -6,6 +6,7 @@ import com.treeyh.raindrop.consts.ErrorConsts;
 import com.treeyh.raindrop.exception.RaindropException;
 import com.treeyh.raindrop.model.ETimeUnit;
 import com.treeyh.raindrop.utils.DateUtils;
+import com.treeyh.raindrop.utils.StrUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
@@ -26,6 +27,11 @@ import java.util.Objects;
 @Data
 @Slf4j
 public class RaindropConfig {
+
+    /**
+     * 服务名
+     */
+    private String serverName;
 
     /**
      * IdMode Id生成模式， Snowflake：雪花算法；NumberSection：号段模式，目前仅支持Snowflake
@@ -103,6 +109,14 @@ public class RaindropConfig {
      * @throws RaindropException
      */
     public void checkConfig() throws RaindropException {
+        if (StrUtils.isEmpty(serverName)) {
+            serverName = "";
+        }
+        if (serverName.length() > 40) {
+            log.error(ErrorConsts.SERVICE_NAME_LENGTH_ERROR + "; serverName:" + this.serverName);
+            throw new RaindropException(ErrorConsts.CHECK_CONFIG_ERROR, ErrorConsts.SERVICE_NAME_LENGTH_ERROR);
+        }
+
         String mode = this.idMode.toLowerCase();
         if (!Objects.equals(mode, Consts.ID_MODE_SNOWFLAKE) && !Objects.equals(mode, Consts.ID_MODE_NUMBER_SECTION)) {
             this.idMode = Consts.ID_MODE_SNOWFLAKE;

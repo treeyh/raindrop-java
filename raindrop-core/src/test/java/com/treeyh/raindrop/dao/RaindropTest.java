@@ -48,12 +48,6 @@ public class RaindropTest {
         Assertions.assertTrue(true);
     }
 
-    @Test
-    public void testTest(){
-        System.out.println(ETimeUnit.Day == ETimeUnit.Day);
-        System.out.println(ETimeUnit.Minuter == ETimeUnit.Day);
-    }
-
 //    @Test
 //    public void testInitFullWorker() {
 //        RaindropConfig config = BaseTest.getTestSecondConfig();
