@@ -53,7 +53,6 @@ public class BaseTest {
 
     public static RaindropConfig getTestMillisecondConfig() {
         return RaindropConfig.builder()
-                .serverName("raindrop-java")
                 .dbConfig(getDefaultRaindropDbConfig())
                 .idMode(Consts.ID_MODE_SNOWFLAKE)
                 .servicePort(servicePort)
@@ -72,7 +71,6 @@ public class BaseTest {
 
     public static RaindropConfig getTestSecondConfig() {
         return RaindropConfig.builder()
-                .serverName("raindrop-java")
                 .dbConfig(getDefaultRaindropDbConfig())
                 .idMode(Consts.ID_MODE_SNOWFLAKE)
                 .servicePort(servicePort)

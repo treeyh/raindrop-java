@@ -352,7 +352,7 @@ public class RaindropSnowflakeWorker {
 
         String localIp = NetworkUtils.getLocalIp();
         String mac = NetworkUtils.getLocalIpMac();
-        workerCode = config.getServerName() + "#" + localIp + "#" + config.getServicePort() + "#" + config.getTimeUnit().getType() + "#" + mac;
+        workerCode = localIp + "#" + config.getServicePort() + "#" + config.getTimeUnit().getType() + "#" + mac;
 
         if (config.isPriorityEqualCodeWorkId() &&
                 (ETimeUnit.Millisecond == config.getTimeUnit() ||

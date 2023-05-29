@@ -39,11 +39,6 @@ public class ErrorConsts {
      */
     public final static Integer NEW_ID_FAIL_SEQUENCE_EXCEEDS_MAX_VALUE = 1006;
 
-    /**
-     * 服务名长度不能大于40
-     */
-    public final static String SERVICE_NAME_LENGTH_ERROR = "ServiceName length cannot be greater than 40";
-
 
     /**
      * 服务端口设置错误

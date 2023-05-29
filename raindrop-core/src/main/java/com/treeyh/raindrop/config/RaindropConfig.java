@@ -29,11 +29,6 @@ import java.util.Objects;
 public class RaindropConfig {
 
     /**
-     * 服务名
-     */
-    private String serverName;
-
-    /**
      * IdMode Id生成模式， Snowflake：雪花算法；NumberSection：号段模式，目前仅支持Snowflake
      */
     private String idMode;
@@ -109,13 +104,6 @@ public class RaindropConfig {
      * @throws RaindropException
      */
     public void checkConfig() throws RaindropException {
-        if (StrUtils.isEmpty(serverName)) {
-            serverName = "";
-        }
-        if (serverName.length() > 40) {
-            log.error(ErrorConsts.SERVICE_NAME_LENGTH_ERROR + "; serverName:" + this.serverName);
-            throw new RaindropException(ErrorConsts.CHECK_CONFIG_ERROR, ErrorConsts.SERVICE_NAME_LENGTH_ERROR);
-        }
 
         String mode = this.idMode.toLowerCase();
         if (!Objects.equals(mode, Consts.ID_MODE_SNOWFLAKE) && !Objects.equals(mode, Consts.ID_MODE_NUMBER_SECTION)) {
