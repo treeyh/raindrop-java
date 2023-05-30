@@ -329,7 +329,9 @@ public class RaindropSnowflakeWorker {
             return;
         }
 
-        if (Objects.equals(config.getDbConfig().getDbType(), Consts.DB_TYPE_MYSQL)) {
+        if (Objects.equals(config.getDbConfig().getDbType(), Consts.DB_TYPE_POSTGRESQL)) {
+
+        } else {
             raindropWorkerDAO = new RaindropWorkerMySqlDAO();
             raindropWorkerDAO.initConn(config.getDbConfig());
         }

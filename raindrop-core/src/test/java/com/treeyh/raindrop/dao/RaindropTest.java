@@ -16,7 +16,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -136,5 +138,95 @@ public class RaindropTest {
                 break;
             }
         }
+    }
+    @Test
+    public void testNewIdByCodeLongTime() {
+
+        Raindrop.getInstance().Init(BaseTest.getTestSecondConfig());
+
+        String code1 = "code1";
+        String code2 = "code2";
+
+        long endTime = System.currentTimeMillis() + (60 * 60 * 1000L);
+        Utils.sleep(3000L);
+        Map<Long, Integer> idCode1Map = new HashMap<>();
+        List<Long> idCode1s = new ArrayList<>();
+        Map<Long, Integer> idCode2Map = new HashMap<>();
+        List<Long> idCode2s = new ArrayList<>();
+        int index = 0;
+        while (true) {
+            index++;
+            Utils.sleep(100);
+            long time = System.currentTimeMillis();
+
+            try {
+                long id1 = Raindrop.getInstance().newIdByCode(code1);
+                long id2 = Raindrop.getInstance().newIdByCode(code2);
+                if (index % 300 == 0) {
+                    log.info(DateUtils.date2Str(new Date(time)) + " id1:" + id1 + "; id2:" + id2);
+                }
+                if (idCode1Map.containsKey(id1)){
+                    log.error("id repeat !!  id1: "+ id1);
+                    break;
+                }
+                idCode1Map.put(id1, 1);
+                idCode1s.add(id1);
+
+                if (idCode1Map.containsKey(id2)) {
+                    log.info("id2 id1map repeat; id2: "+ id2);
+                }
+
+                if (idCode2Map.containsKey(id2)){
+                    log.error("id repeat !!  id2: "+ id2);
+                    break;
+                }
+                idCode2Map.put(id2, 1);
+                idCode2s.add(id2);
+            } catch (RaindropException e) {
+                log.error(e.getMessage(), e);
+            }
+            if (time > endTime) {
+                break;
+            }
+        }
+    }
+    @Test
+    public void testNewIdTimeBack() {
+
+        Raindrop.getInstance().Init(BaseTest.getTestSecondConfig());
+
+        long endTime = System.currentTimeMillis() + (2 * 60 * 1000L);
+        Utils.sleep(3000L);
+        int index = 0;
+
+        Map<Long, Integer> idMap = new HashMap<>();
+        List<Long> ids = new ArrayList<>();
+
+
+        while (true) {
+            index++;
+            Utils.sleep(200);
+            long time = System.currentTimeMillis();
+
+            try {
+                Long id = Raindrop.getInstance().newId();
+
+                if (idMap.containsKey(id)){
+                    log.error("id repeat !!  id: "+ id);
+                    break;
+                }
+
+                idMap.put(id, 1);
+                ids.add(id);
+            } catch (RaindropException e) {
+                log.error(e.getMessage(), e);
+            }
+            if (time > endTime) {
+                break;
+            }
+        }
+
+        System.out.println(idMap);
+        System.out.println(ids);
     }
 }
