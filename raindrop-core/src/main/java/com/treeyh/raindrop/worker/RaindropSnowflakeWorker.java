@@ -487,14 +487,14 @@ public class RaindropSnowflakeWorker {
      * 启动当前流水号计算
      */
     private void startCalcNowTimeSeq() {
-        long interval = 1;
+        long interval = 1L;
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor((runnable) -> {
             Thread thread = new Thread(runnable, "Raindrop NowTimeSeq");
             thread.setDaemon(true);
             return thread;
         });
 
-        if (timeUnit != 1) {
+        if (!Objects.equals(ETimeUnit.Millisecond.getType(), timeUnit)) {
             interval = 1000L;
         }
 
