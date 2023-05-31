@@ -471,8 +471,8 @@ public class RaindropSnowflakeWorker {
         });
 
         scheduler.scheduleAtFixedRate(() -> {
-            log.info("worker heartbeat. workerId:"+ worker.getId());
             try {
+                log.info("worker heartbeat. workerId:"+ worker.getId());
                 worker = this.raindropWorkerDAO.heartbeatWorker(worker);
                 if (log.isDebugEnabled()) {
                     log.debug("worker heartbeat worker:"+worker.toString());
