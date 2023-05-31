@@ -472,15 +472,19 @@ public class RaindropSnowflakeWorker {
 
         scheduler.scheduleAtFixedRate(() -> {
             log.info("worker heartbeat. workerId:"+ worker.getId());
-            worker = this.raindropWorkerDAO.heartbeatWorker(worker);
-            if (log.isDebugEnabled()) {
-                log.debug("worker heartbeat worker:"+worker.toString());
-            }
-            if ((worker.getHeartbeatTime().getTime() > worker.getUpdateTime().getTime() + Consts.HEARTBEAT_TIME_INTERVAL) ||
-                    (worker.getHeartbeatTime().getTime() < worker.getUpdateTime().getTime() - Consts.HEARTBEAT_TIME_INTERVAL)) {
-                log.error("Server and database time gap exceeds threshold!!! heartbeatTime:" +
-                        DateUtils.date2Str(worker.getHeartbeatTime()) + "; updateTime:" +
-                        DateUtils.date2Str(worker.getUpdateTime()));
+            try {
+                worker = this.raindropWorkerDAO.heartbeatWorker(worker);
+                if (log.isDebugEnabled()) {
+                    log.debug("worker heartbeat worker:"+worker.toString());
+                }
+                if ((worker.getHeartbeatTime().getTime() > worker.getUpdateTime().getTime() + Consts.HEARTBEAT_TIME_INTERVAL) ||
+                        (worker.getHeartbeatTime().getTime() < worker.getUpdateTime().getTime() - Consts.HEARTBEAT_TIME_INTERVAL)) {
+                    log.error("Server and database time gap exceeds threshold!!! heartbeatTime:" +
+                            DateUtils.date2Str(worker.getHeartbeatTime()) + "; updateTime:" +
+                            DateUtils.date2Str(worker.getUpdateTime()));
+                }
+            }catch (Throwable e) {
+                log.error("worker heartbeat throwable. message:"+ e.getMessage(), e);
             }
         }, Consts.HEARTBEAT_TIME_INTERVAL, Consts.HEARTBEAT_TIME_INTERVAL, TimeUnit.MILLISECONDS);
     }
