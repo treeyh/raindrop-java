@@ -212,56 +212,56 @@ public class RaindropConfig {
 
         switch (this.workIdLength) {
             case 3:
-                if(this.serviceMinWorkId < 1 || this.serviceMaxWorkId > 7) {
+                if(this.serviceMinWorkId < 0 || this.serviceMaxWorkId > 7) {
                     log.error(ErrorConsts.WORK_ID_RANGE_ERROR_3 + "; serviceMinWorkId:" + this.serviceMinWorkId+
                             "; serviceMaxWorkId:"+ this.serviceMaxWorkId);
                     throw new RaindropException(ErrorConsts.CHECK_CONFIG_ERROR, ErrorConsts.WORK_ID_RANGE_ERROR_3);
                 }
                 break;
             case 4:
-                if(this.serviceMinWorkId < 1 || this.serviceMaxWorkId > 15) {
+                if(this.serviceMinWorkId < 0 || this.serviceMaxWorkId > 15) {
                     log.error(ErrorConsts.WORK_ID_RANGE_ERROR_4 + "; serviceMinWorkId:" + this.serviceMinWorkId+
                             "; serviceMaxWorkId:"+ this.serviceMaxWorkId);
                     throw new RaindropException(ErrorConsts.CHECK_CONFIG_ERROR, ErrorConsts.WORK_ID_RANGE_ERROR_4);
                 }
                 break;
             case 5:
-                if(this.serviceMinWorkId < 1 || this.serviceMaxWorkId > 31) {
+                if(this.serviceMinWorkId < 0 || this.serviceMaxWorkId > 31) {
                     log.error(ErrorConsts.WORK_ID_RANGE_ERROR_5 + "; serviceMinWorkId:" + this.serviceMinWorkId+
                             "; serviceMaxWorkId:"+ this.serviceMaxWorkId);
                     throw new RaindropException(ErrorConsts.CHECK_CONFIG_ERROR, ErrorConsts.WORK_ID_RANGE_ERROR_5);
                 }
                 break;
             case 6:
-                if(this.serviceMinWorkId < 1 || this.serviceMaxWorkId > 63) {
+                if(this.serviceMinWorkId < 0 || this.serviceMaxWorkId > 63) {
                     log.error(ErrorConsts.WORK_ID_RANGE_ERROR_6 + "; serviceMinWorkId:" + this.serviceMinWorkId+
                             "; serviceMaxWorkId:"+ this.serviceMaxWorkId);
                     throw new RaindropException(ErrorConsts.CHECK_CONFIG_ERROR, ErrorConsts.WORK_ID_RANGE_ERROR_6);
                 }
                 break;
             case 7:
-                if(this.serviceMinWorkId < 1 || this.serviceMaxWorkId > 127) {
+                if(this.serviceMinWorkId < 0 || this.serviceMaxWorkId > 127) {
                     log.error(ErrorConsts.WORK_ID_RANGE_ERROR_7 + "; serviceMinWorkId:" + this.serviceMinWorkId+
                             "; serviceMaxWorkId:"+ this.serviceMaxWorkId);
                     throw new RaindropException(ErrorConsts.CHECK_CONFIG_ERROR, ErrorConsts.WORK_ID_RANGE_ERROR_7);
                 }
                 break;
             case 8:
-                if(this.serviceMinWorkId < 1 || this.serviceMaxWorkId > 255) {
+                if(this.serviceMinWorkId < 0 || this.serviceMaxWorkId > 255) {
                     log.error(ErrorConsts.WORK_ID_RANGE_ERROR_8 + "; serviceMinWorkId:" + this.serviceMinWorkId+
                             "; serviceMaxWorkId:"+ this.serviceMaxWorkId);
                     throw new RaindropException(ErrorConsts.CHECK_CONFIG_ERROR, ErrorConsts.WORK_ID_RANGE_ERROR_8);
                 }
                 break;
             case 9:
-                if(this.serviceMinWorkId < 1 || this.serviceMaxWorkId > 511) {
+                if(this.serviceMinWorkId < 0 || this.serviceMaxWorkId > 511) {
                     log.error(ErrorConsts.WORK_ID_RANGE_ERROR_9 + "; serviceMinWorkId:" + this.serviceMinWorkId+
                             "; serviceMaxWorkId:"+ this.serviceMaxWorkId);
                     throw new RaindropException(ErrorConsts.CHECK_CONFIG_ERROR, ErrorConsts.WORK_ID_RANGE_ERROR_9);
                 }
                 break;
             case 10:
-                if(this.serviceMinWorkId < 1 || this.serviceMaxWorkId > 1023) {
+                if(this.serviceMinWorkId < 0 || this.serviceMaxWorkId > 1023) {
                     log.error(ErrorConsts.WORK_ID_RANGE_ERROR_10 + "; serviceMinWorkId:" + this.serviceMinWorkId+
                             "; serviceMaxWorkId:"+ this.serviceMaxWorkId);
                     throw new RaindropException(ErrorConsts.CHECK_CONFIG_ERROR, ErrorConsts.WORK_ID_RANGE_ERROR_10);
