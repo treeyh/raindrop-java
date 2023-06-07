@@ -26,7 +26,18 @@ public class RaindropDbConfig {
      */
     private String dbUrl;
 
+    /**
+     * 数据库用户名
+     */
     private String dbName;
 
+    /**
+     * 数据库密码
+     */
     private String dbPassword;
+
+    /**
+     * 工作表名
+     */
+    private String tableName;
 }

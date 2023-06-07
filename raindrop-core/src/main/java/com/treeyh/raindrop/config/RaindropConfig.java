@@ -110,6 +110,10 @@ public class RaindropConfig {
             this.idMode = Consts.ID_MODE_SNOWFLAKE;
         }
 
+        if (StrUtils.isEmpty(this.dbConfig.getDbType())) {
+            this.dbConfig.setDbType(Consts.DB_TYPE_MYSQL);
+        }
+
         if (this.servicePort < 0 || this.servicePort > maxPort) {
             log.error(ErrorConsts.SERVER_PORT_ERROR + "; servicePort:" + this.servicePort);
             throw new RaindropException(ErrorConsts.CHECK_CONFIG_ERROR, ErrorConsts.SERVER_PORT_ERROR);

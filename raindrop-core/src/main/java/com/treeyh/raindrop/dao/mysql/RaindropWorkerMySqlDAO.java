@@ -27,31 +27,18 @@ public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
 
     private HikariDataSource ds;
 
-    private static final String tableName = "soc_raindrop_worker";
+    private String tableName = "soc_raindrop_worker";
 
-    private static final  String columnName = "value";
-    private static final String sqlGetNow = "SELECT NOW() AS "+columnName+";";
+    private String columnName = "value";
+    private String sqlGetNow = "SELECT NOW() AS "+columnName+";";
 
-    private static final String sqlGetDbName = "SELECT DATABASE() AS "+columnName+";";
+    private String sqlGetDbName = "SELECT DATABASE() AS "+columnName+";";
 
-    private static final String sqlExistTable = "SELECT count(*) AS "+columnName+" FROM information_schema.tables " +
+    private String sqlExistTable = "SELECT count(*) AS "+columnName+" FROM information_schema.tables " +
             "WHERE table_schema = ? AND table_name = ? AND table_type = ?";
 
-    private static final String sqlPreSelectRow = "SELECT `id`, `code`, `time_unit`, `heartbeat_time`, `create_time`, " +
-            "`update_time`, `version`, `del_flag` FROM " + tableName + " WHERE `del_flag` = 2 ";
-    private static final String sqlInitTable = "CREATE TABLE `" + tableName + "` (\n" +
-            "\t`id` bigint NOT NULL,\n" +
-            "\t`code` varchar(128) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',\n" +
-            "\t`time_unit` tinyint NOT NULL DEFAULT '2',\n" +
-            "\t`heartbeat_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
-            "\t`create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
-            "\t`update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
-            "\t`version` bigint NOT NULL DEFAULT '1',\n" +
-            "\t`del_flag` tinyint NOT NULL DEFAULT '2',\n" +
-            "\tPRIMARY KEY (`id`),\n" +
-            "\tKEY `idx_soc_raindrop_worker_heartbeat_time` (`heartbeat_time`),\n" +
-            "\tKEY `idx_soc_raindrop_worker_code` (`code`)\n" +
-            "\t) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;";
+    private String sqlPreSelectRow;
+    private String sqlInitTable;
 
     @Override
     public void initConn(RaindropDbConfig dbConfig) throws ClassNotFoundException, SQLException {
@@ -59,6 +46,26 @@ public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
         if (StrUtils.isNotEmpty(dbConfig.getJdbcDriver())) {
             Class.forName(dbConfig.getJdbcDriver());
         }
+
+        if (StrUtils.isNotEmpty(dbConfig.getTableName())) {
+            this.tableName = dbConfig.getTableName();
+        }
+
+        this.sqlPreSelectRow = "SELECT `id`, `code`, `time_unit`, `heartbeat_time`, `create_time`, " +
+                "`update_time`, `version`, `del_flag` FROM `" + this.tableName + "` WHERE `del_flag` = 2 ";
+        this.sqlInitTable = "CREATE TABLE `" + this.tableName + "` (\n" +
+                "\t`id` bigint NOT NULL,\n" +
+                "\t`code` varchar(128) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',\n" +
+                "\t`time_unit` tinyint NOT NULL DEFAULT '2',\n" +
+                "\t`heartbeat_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
+                "\t`create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
+                "\t`update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n" +
+                "\t`version` bigint NOT NULL DEFAULT '1',\n" +
+                "\t`del_flag` tinyint NOT NULL DEFAULT '2',\n" +
+                "\tPRIMARY KEY (`id`),\n" +
+                "\tKEY `idx_soc_raindrop_worker_heartbeat_time` (`heartbeat_time`),\n" +
+                "\tKEY `idx_soc_raindrop_worker_code` (`code`)\n" +
+                "\t) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;";
 
         ds = new HikariDataSource();
         ds.setJdbcUrl(dbConfig.getDbUrl());

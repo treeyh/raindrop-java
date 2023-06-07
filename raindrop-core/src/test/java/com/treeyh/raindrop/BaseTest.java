@@ -34,6 +34,8 @@ public class BaseTest {
 
     public static int servicePort = 65510;
 
+    private static String tableName = "soc_raindrop_worker";
+
     public static long beginId = 10L;
 
     public static long endId = 15L;
@@ -48,7 +50,7 @@ public class BaseTest {
 //                .dbPassword("7Dv_v2VxnZ8PgG26f")
                 .dbName("root")
                 .dbType(Consts.DB_TYPE_MYSQL)
-
+                .tableName(tableName)
                 .build();
     }
 
