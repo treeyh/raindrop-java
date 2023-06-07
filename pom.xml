@@ -7,10 +7,14 @@
     <groupId>com.treeyh.raindrop</groupId>
     <artifactId>raindrop</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
     <modules>
         <module>raindrop-core</module>
     </modules>
+
+    <name>Raindrop ID Generator</name>
+    <description>Snowflake algorithm for ID generation strategy</description>
+    <url>https://github.com/treeyh/raindrop-java</url>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -167,6 +171,7 @@
             <name>YuHai</name>
             <email>tree@ejyi.com</email>
             <url>https://treeyh.github.io</url>
+            <timezone>+8</timezone>
         </developer>
     </developers>
 </project>
