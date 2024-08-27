@@ -72,6 +72,15 @@ public abstract class AbstractRaindropWorkerDAO {
 
 
     /**
+     * 获取数据库Unix时间戳
+     * @return 数据库Unix时间戳
+     */
+    public abstract Long getUnixTime() throws SQLException;
+
+
+
+
+    /**
      * 判断表是否存在
      * @return 是否存在
      */

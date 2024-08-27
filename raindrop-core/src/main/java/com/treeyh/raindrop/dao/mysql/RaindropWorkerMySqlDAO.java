@@ -32,6 +32,8 @@ public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
     private String columnName = "value";
     private String sqlGetNow = "SELECT NOW() AS "+columnName+";";
 
+    private String sqlGetUnixNow = "SELECT UNIX_TIMESTAMP() AS "+columnName+";";
+
     private String sqlGetDbName = "SELECT DATABASE() AS "+columnName+";";
 
     private String sqlExistTable = "SELECT count(*) AS "+columnName+" FROM information_schema.tables " +
@@ -125,6 +127,27 @@ public class RaindropWorkerMySqlDAO extends AbstractRaindropWorkerDAO {
             close(conn, statement);
         }
         return date;
+    }
+
+    @Override
+    public Long getUnixTime() {
+        Connection conn = null;
+        PreparedStatement statement = null;
+        Long now = 0L;
+        try {
+            conn = ds.getConnection();
+            statement = conn.prepareStatement(sqlGetUnixNow);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                now = rs.getLong(columnName);
+                break;
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+        }finally {
+            close(conn, statement);
+        }
+        return now;
     }
 
     private String getDbName() {
